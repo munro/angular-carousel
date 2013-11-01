@@ -150,7 +150,9 @@ angular.module('angular-carousel')
             this.index=0;
             this.position=0;
         }
-        this.items = items || [];  // prevent internal errors when items is undefined
+        this.items = (items || []).map(function (item) {
+            return angular.element(item).scope();
+        });  // prevent internal errors when items is undefined
         this.init();
     };
     CollectionManager.prototype.cycleAtEnd = function() {
@@ -164,7 +166,7 @@ angular.module('angular-carousel')
         //     this.log('item already present, skip it');
         //     return;
         // }
-        this.items.push(slide);
+        this.items.push(angular.element(slide).scope());
         if (updateIndex) {
             // no need to change index when appending items
             this.adjustBuffer();
