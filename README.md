@@ -60,6 +60,39 @@ The `prev()` and `next()` function return promises containing the prev and next 
  - ~~`rn-carousel-cycle` to have an forever-cycling carousel.~~ (BROKEN)
  - `rn-carousel-watch` force deep watch of the ngRepeat collection (listen to add/remove items).
 
+## API :
+
+You can access the carousel collection API by binding the carousel to a model.
+
+```html
+<ul rn-carousel ng-model="myCarousel">
+    <!-- <li>...</li> -->
+</ul>
+<div class="rn-carousel-indicator">
+    <span ng-repeat="item in myCarousel.items" ng-class="{active: $index==myCarousel.index}" ng-click="myCarousel.goTo($index)">●</span>
+</div>
+<a href="{{myCarousel.items[myCarousel.index].data_url}}">Learn More</a>
+```
+
+#### carouselModel.index
+
+Get the current position of the carouselModel.
+
+#### carouselModel.items
+
+A list of all the carouselModel item's scopes.  You can also refernce the length with `carouselModel.items.length`.
+
+#### carouselModel.goTo(index)
+
+Jump to a slide in the carouselModel.  The index will wrap around.
+
+#### carouselModel.next()
+
+Go to the next slide.
+
+#### carouselModel.prev()
+
+Go to the previous slide.
 
 ### Infinite carousel :
 
