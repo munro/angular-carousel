@@ -1,6 +1,6 @@
 /**
  * Angular Carousel - Mobile friendly touch carousel for AngularJS
- * @version v0.0.9 - 2013-10-11
+ * @version v0.0.9 - 2013-11-01
  * @link http://revolunet.github.com/angular-carousel
  * @author Julien Bouquillon <julien@revolunet.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -237,6 +237,7 @@ angular.module('angular-carousel')
           collectionParams.bufferSize = 3;
           collectionParams.buffered = true;
         }
+        collectionParams.scope = scope;
 
         // initialise the collection
         scope.carouselCollection = CollectionManager.create(collectionParams);
@@ -254,6 +255,13 @@ angular.module('angular-carousel')
           if (containerWidth===0) updateContainerWidth();
           updateSlidePosition();
         });
+
+        /* Expose collection info to parent scope */
+        if (iAttrs.ngModel) {
+          scope.$watch('carouselCollection', function (value) {
+            scope.$parent[iAttrs.ngModel] = value;
+          });
+        }
 
         if (angular.isDefined(iAttrs.rnCarouselWatch)) {
           scope.$watch(originalCollection, function(newValue, oldValue) {
@@ -305,6 +313,7 @@ angular.module('angular-carousel')
             } else {
               containerWidth = slides[0].getBoundingClientRect().width;
             }
+            containerWidth = Math.floor(containerWidth);
             container.css('width', containerWidth + 'px');
             return containerWidth;
         }
@@ -602,7 +611,9 @@ angular.module('angular-carousel')
             this.index=0;
             this.position=0;
         }
-        this.items = items || [];  // prevent internal errors when items is undefined
+        this.items = (items || []).map(function (item) {
+            return angular.element(item).scope();
+        });  // prevent internal errors when items is undefined
         this.init();
     };
     CollectionManager.prototype.cycleAtEnd = function() {
@@ -616,7 +627,7 @@ angular.module('angular-carousel')
         //     this.log('item already present, skip it');
         //     return;
         // }
-        this.items.push(slide);
+        this.items.push(angular.element(slide).scope());
         if (updateIndex) {
             // no need to change index when appending items
             this.adjustBuffer();
