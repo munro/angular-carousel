@@ -174,6 +174,7 @@ angular.module('angular-carousel')
           collectionParams.bufferSize = 3;
           collectionParams.buffered = true;
         }
+        collectionParams.scope = scope;
 
         // initialise the collection
         scope.carouselCollection = CollectionManager.create(collectionParams);
@@ -191,6 +192,13 @@ angular.module('angular-carousel')
           if (containerWidth===0) updateContainerWidth();
           updateSlidePosition();
         });
+
+        /* Expose collection info to parent scope */
+        if (iAttrs.ngModel) {
+          scope.$watch('carouselCollection', function (value) {
+            scope.$parent[iAttrs.ngModel] = value;
+          });
+        }
 
         if (angular.isDefined(iAttrs.rnCarouselWatch)) {
           scope.$watch(originalCollection, function(newValue, oldValue) {
